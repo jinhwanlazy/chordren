@@ -2,6 +2,7 @@
   "name": "chordren",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://jinhwanlazy.github.io/chordren",
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
