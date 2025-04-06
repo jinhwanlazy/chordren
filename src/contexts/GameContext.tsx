@@ -55,7 +55,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (isCorrect && activeNotes.length === 0) {
       moveToNextChord();
     }
-  }, [isCorrect, activeNotes, targetChord, moveToNextChord, recordAttempt, startTime ])
+  }, [isCorrect, activeNotes, targetChord, moveToNextChord ])
 
   // Check if notes match the target chord
   useEffect(() => {
@@ -68,7 +68,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       recordAttempt(targetChord, responseTime);
       setIsCorrect(true);
     }
-  }, [activeNotes, targetChord]);
+  }, [activeNotes, targetChord, recordAttempt, startTime ]);
 
   useEffect(() => {
     setTargetChordName(targetChord ? chordToString(targetChord) : 'Loading...');
