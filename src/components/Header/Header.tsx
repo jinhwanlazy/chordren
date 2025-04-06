@@ -19,7 +19,7 @@ const Header = ({ toggleDarkMode, isDarkMode }: HeaderProps) => {
           </div>
           <div className="flex items-center space-x-4">
             <a
-              href="https://github.com/yourusername/chordren"
+              href="https://github.com/jinhwanlazy/chordren"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400"
