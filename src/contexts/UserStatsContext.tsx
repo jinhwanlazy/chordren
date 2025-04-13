@@ -12,7 +12,7 @@ interface ChordStat {
 
 interface UserStatsContextType {
   chordStats: Record<string, ChordStat>;
-  recordAttempt: (chord: Chord, responseTimeMs: number) => void;
+  recordAttempt: (chord: Chord, startTime: number, now: number) => void;
 }
 
 const UserStatsContext = createContext<UserStatsContextType | undefined>(undefined);
@@ -22,8 +22,9 @@ const MAX_RESPONSE_TIME = 10000;
 export const UserStatsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [chordStats, setChordStats] = useState<Record<string, ChordStat>>({});
 
-  const recordAttempt = (chord: Chord, responseTimeMs: number) => {
+  const recordAttempt = (chord: Chord, startTime: number, now: number) => {
     const chordId = chordToString(chord);
+    const responseTimeMs = now - startTime;
     const success = responseTimeMs <= MAX_RESPONSE_TIME;
     console.log(chordId, success, responseTimeMs);
 

@@ -1,97 +1,130 @@
-// GameContext.sx
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef, useCallback } from 'react';
-import { Chord, allChords, validateNotes, chordToString } from '../utils/chordUtils';
+import { Chord, allChords, validateNotes } from '../utils/chordUtils';
 import { NoteSet } from '../utils/noteUtils';
 import { useMidiContext } from './MidiContext';
-import { useUserStatsContext } from './UserStatsContext'; // Add this import
+import { useUserStatsContext } from './UserStatsContext';
+
+interface ChordWithState {
+  chord: Chord;
+  startTime: number;
+}
 
 interface GameContextType {
-  targetChord: Chord | null;
-  targetChordName: string | null;
+  target: ChordWithState | null;
+  nextTarget: ChordWithState | null;
   isCorrect: boolean;
   isFailed: boolean;
   isTimedOut: boolean;
-  moveToNextChord: () => void;
+  moveToNextTarget: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [targetChord, setTargetChord] = useState<Chord | null>(null);
-  const [targetChordName, setTargetChordName] = useState<string | null>(null);
+  const [target, setTarget] = useState<ChordWithState | null>(null);
+  const [nextTarget, setNextTarget] = useState<ChordWithState | null>(null);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isFailed, setIsFailed] = useState(false);
   const [isTimedOut, setIsTimedOut] = useState(false);
-  const [startTime, setStartTime] = useState<number>(Date.now());
+  //const [startTime, setStartTime] = useState<number>(Date.now());
   const { activeNotes } = useMidiContext();
   const { recordAttempt } = useUserStatsContext();
   const initializedRef = useRef(false);
 
-  const moveToNextChord = useCallback(() => {
-    console.log("moveToNextChord");
+  const getRandomChord = useCallback((): ChordWithState => {
     const randomIndex = Math.floor(Math.random() * allChords.length);
-    const nextChord = allChords[randomIndex];
+    let chord = {...allChords[randomIndex]};
+    chord.accidental = Math.random() < 0.5 ? '#' : 'b';
+    return {
+      chord,
+      startTime: -1
+    };
+  }, []);
 
-    setTargetChord(nextChord);
+  // Move to the next chord
+  const moveToNextTarget = useCallback(() => {
+    console.log("moveToNextTarget");
+
+    const newNextTarget = getRandomChord();
+
+    // Current next chord becomes the target chord
+    setTarget(nextTarget);
+    setNextTarget(newNextTarget);
+
     setIsCorrect(false);
     setIsFailed(false);
     setIsTimedOut(false);
-    setStartTime(Date.now());
-  }, []);
+    //setStartTime(Date.now());
+  }, [nextTarget, getRandomChord]);
 
-  // Initialize with first chord
+  // Initialize with first chord and next chord
   useEffect(() => {
     if (!initializedRef.current) {
       initializedRef.current = true;
-      moveToNextChord();
-    }
-  }, [moveToNextChord]);
 
-  // Check end of session.
-  useEffect(() => {;
-    if (!targetChord) {
-      return;
+      // Set initial target chord
+      const initialChord = getRandomChord();
+      setTarget(initialChord);
+
+      // Set initial next chord
+      const initialNextTarget = getRandomChord();
+      setNextTarget(initialNextTarget);
+
+      initialChord.startTime = Date.now();
+      //setStartTime(Date.now());
     }
+  }, [getRandomChord]);
+
+  // Check if we need to visually move to the next chord
+  useEffect(() => {
     if (isCorrect && activeNotes.length === 0) {
-      moveToNextChord();
+      moveToNextTarget();
     }
-  }, [isCorrect, activeNotes, targetChord, moveToNextChord ])
+  }, [isCorrect, activeNotes, moveToNextTarget]);
 
   // Check if notes match the target chord
   useEffect(() => {
-    if (!targetChord) {
+    if (!target || isCorrect) {
       return;
     }
-    const notes = activeNotes.map(note => note.number);
-    if (validateNotes(targetChord, new NoteSet(notes))) {
-      const responseTime = Date.now() - startTime;
-      recordAttempt(targetChord, responseTime);
-      setIsCorrect(true);
-    }
-  }, [activeNotes, targetChord, recordAttempt, startTime ]);
 
+    const notes = activeNotes.map(note => note.number);
+    if (validateNotes(target.chord, new NoteSet(notes))) {
+      recordAttempt(target.chord, target.startTime, Date.now());
+      setIsCorrect(true);
+
+      // Start timing for the next chord immediately
+      if (nextTarget) {
+        nextTarget.startTime = Date.now();
+      }
+    }
+  }, [activeNotes, target, nextTarget, recordAttempt, isCorrect]);
+
+  // Handle timeout for showing hints
   useEffect(() => {
-    setTargetChordName(targetChord ? chordToString(targetChord) : 'Loading...');
+    if (!target) {
+      return;
+    }
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const elapsed = Math.floor((Date.now() - target.startTime) / 1000);
       if (elapsed > 5 && !isTimedOut && !isCorrect) {
         setIsTimedOut(true);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetChord, startTime, isCorrect, isTimedOut]);
+  }, [target, isCorrect, isTimedOut]);
 
   return (
     <GameContext.Provider
       value={{
-        targetChord,
-        targetChordName,
+        target,
+        nextTarget,
         isCorrect,
         isFailed,
         isTimedOut,
-        moveToNextChord,
+        moveToNextTarget,
       }}
     >
       {children}

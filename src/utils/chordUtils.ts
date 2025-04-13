@@ -27,6 +27,7 @@ export interface Chord {
   root: number;
   chordType: ChordType;
   indices: [number, string][];
+  accidental?: Accidental;
 }
 
 const noteIntervalsOfChordType: [ChordType, number[]][] = [
@@ -126,9 +127,9 @@ export function chordTypeToString(chordType: ChordType, skipMajor = true): strin
   }
 }
 
-export function chordToString(chord: Chord, accidentalType: Accidental | 'random' = 'random'): string {
+export function chordToString(chord: Chord): string {
   let symbol = '';
-  symbol += noteToString(chord.root, false, accidentalType);
+  symbol += noteToString(chord.root, false, chord.accidental || 'random');
   symbol += chordTypeToString(chord.chordType);
   return symbol;
 }

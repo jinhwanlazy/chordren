@@ -17,7 +17,7 @@ const KEYBOARD_RANGES = {
 };
 
 const PianoKeyboard: React.FC = () => {
-  const { targetChord, isCorrect, isTimedOut } = useGameContext();
+  const { target, isCorrect, isTimedOut } = useGameContext();
   const { activeNotes } = useMidiContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const [keyWidths, setKeyWidths] = useState({
@@ -60,15 +60,15 @@ const PianoKeyboard: React.FC = () => {
 
   // Update hinted notes when target chord changes
   useEffect(() => {
-    if (isCorrect || !targetChord || !isTimedOut) {
+    if (isCorrect || !target || !isTimedOut) {
       setHintedNotes([]);
       return;
     }
 
     const keyboardRange = KEYBOARD_RANGES[keyboardSize as keyof typeof KEYBOARD_RANGES];
     let offset = Math.floor((keyboardRange.start + keyboardRange.end) / 2 / 12) * 12;
-    const root = targetChord.root + offset;
-    let hintedNotes = targetChord.notes.map(note => {
+    const root = target.chord.root + offset;
+    let hintedNotes = target.chord.notes.map(note => {
       while (note < root) {
         note += 12;
       }
@@ -78,7 +78,7 @@ const PianoKeyboard: React.FC = () => {
       hintedNotes = hintedNotes.map(note => note - 12);
     }
     setHintedNotes(hintedNotes);
-  }, [targetChord, keyboardSize, isCorrect, isTimedOut]);
+  }, [target, keyboardSize, isCorrect, isTimedOut]);
 
   const isNoteActive = (note: number) => {
     return activeNotes.some(activeNote => activeNote.number === note);
@@ -86,10 +86,10 @@ const PianoKeyboard: React.FC = () => {
 
   const keyState = (note: number) => {
     if (isNoteActive(note)) {
-      if (targetChord === null) {
+      if (target === null) {
         return KeyState.Active;
       }
-      else if (targetChord.notes.has(note % 12)) {
+      else if (target.chord.notes.has(note % 12)) {
         return KeyState.Correct;
       }
       else {

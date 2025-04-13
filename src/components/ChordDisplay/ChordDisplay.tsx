@@ -1,6 +1,6 @@
-// ChordDisplay.tsx
 import React from 'react';
 import { useGameContext } from '../../contexts/GameContext';
+import { chordToString } from '../../utils/chordUtils';
 
 const chordNameColor = (isCorrect: boolean, isFailed: boolean, isTimedOut: boolean) => {
   if (isCorrect) return 'text-green-500';
@@ -28,7 +28,7 @@ const messageColor = (isCorrect: boolean, isFailed: boolean, isTimedOut: boolean
 
 
 const ChordDisplay: React.FC = () => {
-  const { targetChordName, isCorrect, isFailed, isTimedOut } = useGameContext();
+  const { target, isCorrect, isFailed, isTimedOut } = useGameContext();
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
@@ -39,7 +39,7 @@ const ChordDisplay: React.FC = () => {
       <div
         className={`text-9xl font-bold transition-colors duration-300 ${chordNameColor(isCorrect, isFailed, isTimedOut)}`}
       >
-        {targetChordName}
+        {target ? chordToString(target.chord) : 'Loading...'}
       </div>
     </div>
   );
