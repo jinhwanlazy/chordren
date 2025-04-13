@@ -1,13 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef, useCallback } from 'react';
-import { Chord, allChords, validateNotes } from '../utils/chordUtils';
+import { allChords, validateNotes } from '../utils/chordUtils';
 import { NoteSet } from '../utils/noteUtils';
 import { useMidiContext } from './MidiContext';
 import { useUserStatsContext } from './UserStatsContext';
-
-interface ChordWithState {
-  chord: Chord;
-  startTime: number;
-}
+import { ChordWithState } from '../types/chord';
 
 interface GameContextType {
   target: ChordWithState | null;

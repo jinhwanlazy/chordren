@@ -3,7 +3,7 @@ import './App.css';
 import Header from './components/Header/Header';
 import MidiInputSelector from './components/MidiInputSelector/MidiInputSelector';
 import PianoKeyboard from './components/PianoKeyboard/PianoKeyboard';
-import ChordDisplay from './components/ChordDisplay/ChordDisplay';
+import ChordQueue from './components/ChordQueue/ChordQueue';
 import { GameProvider } from './contexts/GameContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { MidiProvider } from './contexts/MidiContext';
@@ -21,7 +21,7 @@ function AppContent() {
         </div>
 
         <div className="flex flex-col items-center mb-8">
-          <ChordDisplay />
+          <ChordQueue />
         </div>
 
         <PianoKeyboard />
