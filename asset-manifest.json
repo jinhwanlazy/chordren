@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/chordren/static/css/main.c1077418.css",
-    "main.js": "/chordren/static/js/main.b565b41d.js",
+    "main.css": "/chordren/static/css/main.c5fc1e7b.css",
+    "main.js": "/chordren/static/js/main.08376239.js",
     "static/js/453.24ee8733.chunk.js": "/chordren/static/js/453.24ee8733.chunk.js",
     "index.html": "/chordren/index.html",
-    "main.c1077418.css.map": "/chordren/static/css/main.c1077418.css.map",
-    "main.b565b41d.js.map": "/chordren/static/js/main.b565b41d.js.map",
+    "main.c5fc1e7b.css.map": "/chordren/static/css/main.c5fc1e7b.css.map",
+    "main.08376239.js.map": "/chordren/static/js/main.08376239.js.map",
     "453.24ee8733.chunk.js.map": "/chordren/static/js/453.24ee8733.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c1077418.css",
-    "static/js/main.b565b41d.js"
+    "static/css/main.c5fc1e7b.css",
+    "static/js/main.08376239.js"
   ]
 }
