@@ -4,6 +4,7 @@ import { NoteSet } from '../utils/noteUtils';
 import { useMidiContext } from './MidiContext';
 import { useUserStatsContext } from './UserStatsContext';
 import { ChordWithState } from '../types/chord';
+import { TIME_LIMIT_MS, ANIMATION_INTERVAL_MS } from '../constants';
 
 interface GameContextType {
   target: ChordWithState | null;
@@ -103,11 +104,11 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - target.startTime) / 1000);
-      if (elapsed > 5 && !isTimedOut && !isCorrect) {
+      const elapsed = Date.now() - target.startTime;
+      if (elapsed > TIME_LIMIT_MS && !isTimedOut && !isCorrect) {
         setIsTimedOut(true);
       }
-    }, 1000);
+    }, ANIMATION_INTERVAL_MS);
 
     return () => clearInterval(interval);
   }, [target, isCorrect, isTimedOut]);

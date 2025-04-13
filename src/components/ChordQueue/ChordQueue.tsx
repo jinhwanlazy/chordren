@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { useGameContext } from '../../contexts/GameContext';
 import { chordToString } from '../../utils/chordUtils';
+import { TIME_LIMIT_MS, ANIMATION_INTERVAL_MS } from '../../constants';
 
 const ChordQueue: React.FC = () => {
   const { target, nextTarget, isCorrect, isFailed, isTimedOut } = useGameContext();
   const [progressPercent, setProgressPercent] = useState(100);
 
   // Constants
-  const TIME_LIMIT_MS = 5000; // 5 seconds timeout
-  const PROGRESS_UPDATE_INTERVAL_MS = 33; // ~30fps for smooth animation
+  //const TIME_LIMIT_MS = 5000; // 5 seconds timeout
+  //const PROGRESS_UPDATE_INTERVAL_MS = 33; // ~30fps for smooth animation
 
   // Progress bar management
   useEffect(() => {
@@ -29,7 +30,7 @@ const ChordQueue: React.FC = () => {
     };
 
     // Update progress for smooth animation
-    const interval = setInterval(updateProgress, PROGRESS_UPDATE_INTERVAL_MS);
+    const interval = setInterval(updateProgress, ANIMATION_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [target, nextTarget, isCorrect]);
 
